@@ -11,7 +11,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 1. Clone the repo
 
 ```cli
-git clone https://github.com/MarkTanashchuk/rust_graphql_nft.git && cd ./Project_name
+git clone https://github.com/MarkTanashchuk/rust_graphql_nft.git && cd ./rust_graphql_nft
 ```
 
 ### Usage
