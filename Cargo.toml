@@ -1,26 +1,40 @@
 [package]
 name = "project"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-fastblur = { git = "https://github.com/fschutt/fastblur" }
-ipfs-api-backend-actix = "0.6"
 dotenv = "0.15.0"
-async-std = { version = "1.10.0", features = ["attributes", "tokio1"] }
-serde = { version = "1.0", features = ["derive"] }
-tokio = { version = "0.2", features = ["full"] }
+
+ipfs-api-backend-actix = "0.6"
 web3 = "0.18.0"
-tokio-stream = "0.1"
-hex-literal = "0.3.4"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_with = "2.0.1"
+serde_json = "1.0"
+
+async-std = { version = "1.10.0", features = ["attributes", "tokio1"] }
 async-graphql = "4.0"
+tokio = { version = "0.2", features = ["full"] }
+tokio-stream = "0.1"
+reqwest = "0.11.12"
+
 async-graphql-actix-web = "4.0"
 actix-web = { version = "4.0.1", default-features = false, features = [
     "macros",
 ] }
-futures = "0.3.17"
-serde_json = "1.0"
+
 gaussian_blur = "0.1.1"
-reqwest = "0.11.12"
+mime = "0.3.16"
+fastblur = { git = "https://github.com/fschutt/fastblur" }
+
+rayon = "1.5.3"
+anyhow = "1.0.65"
+async-trait = "0.1.57"
+
+[dev-dependencies]
+tokio-test = "*"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
