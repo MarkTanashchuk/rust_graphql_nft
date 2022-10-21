@@ -1,6 +1,8 @@
+use reqwest::Client;
 use std::fmt;
 use std::time::Duration;
 
+/// All available providers for processing IPFS links
 #[non_exhaustive]
 enum Gateways {
     GatewayIpfsIo,
@@ -33,20 +35,44 @@ impl Gateways {
     }
 }
 
-/// Converts an IPFS URL to a regular HTTP URL through a pre-defined provider
+/// Converts an IPFS URL to a regular HTTP address through a predefined provider
+///
+/// # Errors
+/// Returns `Err` if none of the 4 providers can open the URL
+///
+/// # Panics
+/// Panics if `Client::builder()::build()` fails
+///
+/// # Examples
+/// Basic usage:
+/// ```
+/// let url = "ipfs://...".to_string();
+/// let normalized_url = normalize_ipfs_url(url).await.expect("Invalid IPFS URL");
+///
+/// assert!(
+///     normalized_url == "https://gateway.ipfs.io/ipfs/..." ||
+///     normalized_url == "https://ipfs.io/ipfs/..." ||
+///     normalized_url == "https://cloudflare-ipfs.com/ipfs/..." ||
+///     normalized_url == "https://cf-ipfs.com/ipfs/..."
+/// );
+/// ```
 pub async fn normalize_ipfs_url(link: String) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    let timeout = Duration::from_secs(15);
+    let client = Client::builder().timeout(Duration::from_secs(15)).build();
+    let client = client.expect("Failed to create reqwest::Client");
 
-    for gateway in Gateways::get_all() {
-        let url = link.replace("ipfs://", &gateway.to_string());
+    if let Some(("ipfs", url)) = link.split_once("://") {
+        for gateway in Gateways::get_all() {
+            let url = format!("{}{}", gateway, url);
 
-        if client.get(&url).timeout(timeout).send().await.is_ok() {
-            return Ok(url);
+            if client.get(&url).send().await.is_ok() {
+                return Ok(url);
+            }
         }
-    }
 
-    Err("Cannot process IPFS link".to_string())
+        Err("Cannot process IPFS link".to_string())
+    } else {
+        Ok(link)
+    }
 }
 
 #[cfg(test)]

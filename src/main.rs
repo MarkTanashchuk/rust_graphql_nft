@@ -1,16 +1,36 @@
 #![deny(missing_docs)]
+#![deny(clippy::all)]
+#![deny(clippy::pedantic)]
+#![deny(clippy::nursery)]
+#![deny(clippy::cargo)]
+#![forbid(unsafe_code)]
+#![allow(clippy::needless_pass_by_value)]
+#![allow(clippy::module_name_repetitions)]
+#![allow(clippy::items_after_statements)]
+#![allow(clippy::multiple_crate_versions)]
+#![allow(clippy::unused_async)]
+#![doc = include_str!("../README.md")]
 
-//! # Rust GraphQL Server for searching NFT (meta)data
+/// Contains API for creating and interacting with Ethereum contracts
+pub mod contract;
 
-mod blockchain;
-mod graphql;
-mod server;
+/// Contains GraphQL [fields](graphql), [token schema](graphql::token) and [metadata formats](graphql::token::metadata)
+pub mod graphql;
+
+/// Contains [server](server) and browser-related functionality
+pub mod server;
 
 use graphql::QueryRoot;
 use server::start_server;
 
-/// Initializes the server and starts it
-fn main() -> std::io::Result<()> {
+/// JSON ABI representation of ERC721 contract (<https://eips.ethereum.org/EIPS/eip-721>)
+pub const ABI: &[u8; 8374] = include_bytes!("./erc721_abi.json");
+
+/// Main function that starts the server
+///
+/// # Errors
+/// Returns an error if a problem with [`actix_web::HttpServer`] server occurs
+pub fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
     let port = std::env::var("PORT").unwrap_or_else(|_| 8080.to_string());

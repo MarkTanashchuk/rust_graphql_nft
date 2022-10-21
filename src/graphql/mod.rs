@@ -1,55 +1,48 @@
-mod token;
+/// Token related API and metadata
+pub mod token;
 
-use crate::blockchain::CustomContract;
-use async_graphql::{FieldResult, Object};
-use token::TokenDefault;
-use web3::types::U256;
+use super::contract::ContractEth;
+use async_graphql::{FieldResult, MergedObject, Object};
+use token::{TokenDefault, TokenSchemaAPI};
 
 /// Root schema that describes all available fields
-pub struct QueryRoot;
+///
+/// To add a new `GraphQL` field, create a new structure with its own impl and async functions
+///
+/// Read more here: <https://async-graphql.github.io/async-graphql/en/introduction.html>
+#[derive(MergedObject, Default)]
+pub struct QueryRoot(pub QueryEthereumToken);
 
-#[Object(cache_control(max_age = 60))]
-impl QueryRoot {
-    /// Get all the tokens by Ethereum address (0x...) and provided ID range
-    /// To get all tokens from address, set `from` to 1 and `to` to 999
-    async fn eth_tokens(
+/// Ethereum token scheme with methods for fetching token data
+#[derive(Default)]
+pub struct QueryEthereumToken;
+
+#[Object(cache_control(max_age = 120))]
+impl QueryEthereumToken {
+    /// Get all tokens at the Ethereum address (0x...) and the specified range of IDs(offset, limit)
+    async fn eth_tokens_with_offset(
         &self,
         address: String,
-        from: i32,
-        to: i32,
+        offset: usize,
+        limit: usize,
     ) -> FieldResult<Vec<TokenDefault>> {
-        let mut tokens = Vec::with_capacity(to as usize);
-        let contract = CustomContract::new_eth(&address);
-        let client = reqwest::Client::new();
-
-        for i in from..to {
-            println!("Checking token at id: {i}");
-
-            if let Ok(uri) = contract.clone().query_token_uri(U256::from(i)).await {
-                tokens.push(TokenDefault::new(
-                    i.to_string(),
-                    uri,
-                    address.clone(),
-                    client.clone(),
-                ));
-            } else {
-                println!("Token at id: {i} not found");
-                break;
-            }
-        }
-
-        Ok(tokens)
+        TokenDefault::tokens(address, Some(offset), Some(limit)).await
     }
 
-    /// Get single token by Ethereum address (0x...) and its ID
-    async fn eth_token(&self, address: String, id: String) -> FieldResult<TokenDefault> {
-        let client = reqwest::Client::new();
-        let uri = {
-            let id = U256::from_dec_str(&id)?;
-            let contract = CustomContract::new_eth(&address);
-            contract.query_token_uri(id).await?
-        };
+    /// Get all tokens at Ethereum address (0x...)
+    async fn eth_tokens(&self, address: String) -> FieldResult<Vec<TokenDefault>> {
+        TokenDefault::tokens(address, None, None).await
+    }
 
-        Ok(TokenDefault::new(id, uri, address, client.clone()))
+    /// Get one token at Ethereum address (0x...) and its ID
+    async fn eth_token(&self, address: String, id: usize) -> FieldResult<TokenDefault> {
+        TokenDefault::tokens(address, Some(id), Some(id))
+            .await?
+            .pop()
+            .ok_or(async_graphql::Error {
+                message: String::from("Token not found"),
+                source: None,
+                extensions: None,
+            })
     }
 }

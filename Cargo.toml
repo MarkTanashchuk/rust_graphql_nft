@@ -1,39 +1,38 @@
 [package]
-name = "project"
-version = "0.2.0"
+name = "rust_graphql_nft_server"
+description = "A GraphQL server for getting NFT's metadata"
+version = "1.0.0"
 edition = "2021"
+repository = "https://github.com/MarkTanashchuk/rust_graphql_nft"
+readme = "README.md"
+license = "MIT"
+keywords = ["rust", "graphql", "nft", "ipfs", "actix"]
+categories = ["web-programming"]
 
 [dependencies]
 dotenv = "0.15.0"
 
-ipfs-api-backend-actix = "0.6"
 web3 = "0.18.0"
 
 serde = { version = "1.0", features = ["derive"] }
-serde_with = "2.0.1"
 serde_json = "1.0"
+mime = "0.3.16"
 
-async-std = { version = "1.10.0", features = ["attributes", "tokio1"] }
 async-graphql = "4.0"
-tokio = { version = "0.2", features = ["full"] }
-tokio-stream = "0.1"
+tokio = { version = "1.21.2", features = ["full"] }
 reqwest = "0.11.12"
+futures = "0.3.24"
 
 async-graphql-actix-web = "4.0"
 actix-web = { version = "4.0.1", default-features = false, features = [
     "macros",
 ] }
 
-gaussian_blur = "0.1.1"
-mime = "0.3.16"
-fastblur = { git = "https://github.com/fschutt/fastblur" }
-
-rayon = "1.5.3"
 anyhow = "1.0.65"
 async-trait = "0.1.57"
 
 [dev-dependencies]
-tokio-test = "*"
+tokio-test = "0.4.2"
 
 [profile.release]
 lto = "fat"

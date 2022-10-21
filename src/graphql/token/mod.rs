@@ -1,67 +1,16 @@
-mod metadata;
+/// Module with structures of token metadata
+pub mod metadata;
 
-use async_graphql::{ComplexObject, Context, OutputType, SimpleObject};
-use serde::{Deserialize, Serialize};
+/// Module with Token's main functionality
+pub mod schema;
 
-pub type TokenDefault = TokenSchema<metadata::default::Metadata>;
-pub type TokenOpenSea = TokenSchema<metadata::opensea::Metadata>;
+use super::ContractEth;
+pub use schema::{TokenSchema, TokenSchemaAPI};
 
-#[derive(Debug, Serialize, SimpleObject)]
-#[graphql(complex)]
-pub struct TokenSchema<T>
-where
-    for<'de> T: OutputType + Deserialize<'de>,
-{
-    #[graphql(name = "tokenId")]
-    pub id: String,
+/// Default token schema with default metadata format and Ethereum contract
+pub type TokenDefault =
+    TokenSchema<metadata::default::Metadata, metadata::default::Metadata, ContractEth>;
 
-    #[graphql(name = "tokenURI")]
-    pub uri: String,
-
-    #[graphql(name = "tokenAddress")]
-    pub address: String,
-
-    #[graphql(skip)]
-    #[serde(skip)]
-    pub _metadata: std::marker::PhantomData<T>,
-
-    #[graphql(skip)]
-    #[serde(skip)]
-    pub client: reqwest::Client,
-}
-
-impl<T> TokenSchema<T>
-where
-    for<'de> T: OutputType + Deserialize<'de>,
-{
-    fn process(&self, metadata: T) -> async_graphql::Result<T> {
-        Ok(metadata)
-    }
-}
-
-#[ComplexObject]
-impl<T> TokenSchema<T>
-where
-    for<'de> T: OutputType + Deserialize<'de>,
-{
-    async fn metadata(&self, _ctx: &Context<'_>) -> async_graphql::Result<T> {
-        let response = self.client.get(&self.uri).send().await?;
-
-        self.process(response.json().await?)
-    }
-}
-
-impl<T> TokenSchema<T>
-where
-    for<'de> T: OutputType + Deserialize<'de>,
-{
-    pub fn new(id: String, uri: String, address: String, client: reqwest::Client) -> Self {
-        Self {
-            id,
-            uri,
-            address,
-            _metadata: std::marker::PhantomData,
-            client,
-        }
-    }
-}
+/// Example of `OpenSea` token scheme with its metadata format and Ethereum contract
+pub type _TokenOpenSea =
+    TokenSchema<metadata::opensea::Metadata, metadata::opensea::MetadataPostProcessed, ContractEth>;

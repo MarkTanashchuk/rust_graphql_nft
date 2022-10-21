@@ -1,4 +1,5 @@
 .history
+.vscode
 .VSCodeCounter
 target
 .env

@@ -10,7 +10,9 @@ pub async fn index(schema: RootSchema, req: GraphQLRequest) -> GraphQLResponse {
     schema.execute(req.into_inner()).await.into()
 }
 
-/// GraphiQL playground
+/// Starts the `GraphiQL` playground
+///
+/// Uses port 8080 by default if the `.env` file does not contain the `PORT` environment variable
 pub async fn playgound() -> HttpResponse {
     let port = std::env::var("PORT").unwrap_or_else(|_| 8080.to_string());
 

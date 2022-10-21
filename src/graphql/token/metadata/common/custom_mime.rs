@@ -1,6 +1,7 @@
 use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+/// Wrapper around `mime` crate with added `serde` support
 pub struct Mime(pub mime::Mime);
 
 #[async_graphql::Object]
