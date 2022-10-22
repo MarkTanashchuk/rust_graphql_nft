@@ -1,7 +1,7 @@
 use async_graphql::OutputType;
 use serde::de::DeserializeOwned;
 
-/// Commonly used data fields such as [attributes](common::attrs), [media](common::media), etc
+/// Commonly used data fields such as [attributes](common::Attributes), [media](common::Media), etc
 pub mod common;
 
 /// Default metadata format
