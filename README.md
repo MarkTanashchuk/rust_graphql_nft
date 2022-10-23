@@ -51,7 +51,7 @@ To add custom metadata formats with custom fields, add a new file with the requi
 # Variables
 # {
 #   "address": "0x7f371bed0bdb2012c01f219ca1c4cbcb35f37aef",
-#   "id": "10"
+#   "id": 7
 # }
 
 query GetTokenWithMetadata($address: String!, $id: String!) {
@@ -77,7 +77,7 @@ query GetTokenWithMetadata($address: String!, $id: String!) {
 ```graphql
 # Variables
 # {
-#   "address": "0x7f371bed0bdb2012c01f219ca1c4cbcb35f37aef",
+#   "address": "0x7f371bed0bdb2012c01f219ca1c4cbcb35f37aef"
 # }
 
 query GetTokenWithMetadata($address: String!) {
@@ -106,9 +106,13 @@ The `TRANSPORT_URL` in the `.env` file is set incorrectly or the provided `API_K
 
 In case of `infura`, create a new Web3 API, click Manage Key and copy the full Ethereum endpoint into `TRANSPORT_URL` in the `.env` file.
 
-### "Abi error: Invalid data"
+### Abi error: Invalid data
 
 Parameters provided to the `QueryAPI::query` function may be invalid(<https://github.com/tomusdrw/rust-web3/issues/383>)
+
+### Failed to fetch
+
+This may be a server-side error. Check the error message in the terminal for more information.
 
 ## License
 
