@@ -20,8 +20,6 @@ git clone https://github.com/MarkTanashchuk/rust_graphql_nft.git && cd ./rust_gr
 
 ```env
 TRANSPORT_URL=https://mainnet.infura.io/v3/API_KEY
-# NAME - Optional for Authorization, "admin" by default
-# PASSWORD - Optional for Authorization, "admin" by default
 # PORT=8080 - Optional, 8080 by default
 ```
 

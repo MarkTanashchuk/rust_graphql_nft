@@ -1,7 +1,7 @@
 [package]
 name = "rust_graphql_nft_server"
 description = "A GraphQL server for getting NFT's metadata"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 repository = "https://github.com/MarkTanashchuk/rust_graphql_nft"
 readme = "README.md"
